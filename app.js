@@ -4,20 +4,21 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
+var { createIndexMiddleware } = require('./routes/index');
 
 // watson stuff
 var AssistantV2 = require('ibm-watson/assistant/v2'); // watson sdk
 var IamAuthenticator = require('ibm-watson/auth').IamAuthenticator;
 
 // Create the service wrapper
-var assistant = new AssistantV2({
-  version: '2019-02-28',
-  authenticator: new IamAuthenticator({
-    apikey: process.env.ASSISTANT_IAM_APIKEY
-  }),
-  url: process.env.ASSISTANT_URL,
-});
+// var assistant = new AssistantV2({
+//   version: '2019-02-28',
+//   authenticator: new IamAuthenticator({
+//     apikey: process.env.ASSISTANT_IAM_APIKEY
+//   }),
+//   url: process.env.ASSISTANT_URL,
+// });
+let assistant = {foo: 42}
 
 var app = express();
 
@@ -31,7 +32,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+app.get('/', createIndexMiddleware({ assistant }));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
